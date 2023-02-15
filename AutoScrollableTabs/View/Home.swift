@@ -9,6 +9,9 @@ import SwiftUI
 
 struct Home: View {
     
+    @State private var activeTab: ProductType = .iphone
+    @Namespace private var animation
+    
     var body: some View {
         // For AutoScrolling Content's
         ScrollViewReader { proxy in
@@ -16,7 +19,7 @@ struct Home: View {
                 
                 LazyVStack(spacing: 15, pinnedViews: [.sectionHeaders]) {
                     Section {
-                       
+                        
                     } header: {
                         scrollableTabs()
                     }
@@ -37,9 +40,27 @@ struct Home: View {
                     Text(type.rawValue)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
+                    // Active Tab Indicator
+                        .background(alignment: .bottom, content: {
+                            if activeTab == type {
+                                Capsule()
+                                    .fill(.white)
+                                    .frame(height: 5)
+                                    .padding(.horizontal, -5)
+                                    .offset(y: 15)
+                                    .matchedGeometryEffect(id: "ACTIVETAB", in: animation)
+                            }
+                        })
                         .padding(.horizontal, 15)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                activeTab = type
+                            }
+                        }
                 }
-            }.padding(.vertical, 15)
+            }
+            .padding(.vertical, 15)
         }
         .background{
             Rectangle().fill(Color(.link))
